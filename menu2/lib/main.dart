@@ -5,8 +5,6 @@ import 'package:flutter_localizations/flutter_localizations.dart'; //日本語�
 
 import 'package:menu2/main_view.dart';
 
-
-
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
