@@ -1,19 +1,29 @@
-import 'package:flutter/material.dart';
+/*
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:menu2/ingredient/data/model/ingredient.dart';
 import 'package:menu2/menu/data/model/menu.dart';
-//import 'package:rxdart/rxdart.dart'; //StreamZip使用のため
-import 'package:async/async.dart'; //StreamZip使用のため
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:menu2/menu/data/model/menu.dart';
+import 'package:menu2/menu/data/repository/image_repository.dart';
+import 'package:menu2/menu/view_model/menu_viewmodel.dart';
+import 'package:menu2/menu/data/repository/menu_repository.dart';
+import 'package:menu2/login/viewmodel/login_provider.dart';
 
 class MenuRepository {
 
+  final Ref ref;
+  final String collectionName; //menuとcustomMenuで共通で使えるようにするために。
   final db = FirebaseFirestore.instance;
+
+  MenuRepository(this.ref, this.collectionName);
+
   List<Menu> menuListBuff = []; 
 
   //メニューリストのリアルタイム取得
-  Stream<List<Menu>> fetchMenus(String userId) {
-    
-    return db.collection('users/$userId/menus')
+  Stream<List<Menu>> fetchMenus() {
+    final familyId = ref.read(familyIdProvider);
+     print('familyId:$familyId');
+
+    return db.collection('families/$familyId/$collectionName')
     .orderBy('createAt', descending: false)
     .snapshots()
     .map((snapshot) {
@@ -60,10 +70,12 @@ class MenuRepository {
 
   //データ追加
   Future<void> addMenu(Menu menu) async{
-    // Firestore のドキュメント ID を事前に生成
-    String newId = db.collection('users/${menu.userId}/menus').doc().id;
+     final familyId = ref.read(familyIdProvider);
 
-    await db.collection('users/${menu.userId}/menus').doc(newId).set({
+    // Firestore のドキュメント ID を事前に生成
+    String newId = db.collection('families/$familyId/$collectionName').doc().id;
+
+    await db.collection('families/$familyId/$collectionName').doc(newId).set({
     ...menu.toMap(), // menu のデータを展開
     'id': newId,     // 事前に作った ID をセット
   });
@@ -71,18 +83,21 @@ class MenuRepository {
 
   //データ削除
   Future<void> deleteMenu(Menu menu) async{
+     final familyId = ref.read(familyIdProvider);
     await db
-    .collection('users/${menu.userId}/menus')
+    .collection('families/$familyId/$collectionName')
     .doc(menu.id)
     .delete();
   }
 
   //データ更新
   Future<void> updateMenu(Menu menu) async{
+     final familyId = ref.read(familyIdProvider);
     await db
-    .collection('users/${menu.userId}/menus')
+    .collection('families/$familyId/$collectionName')
     .doc(menu.id)
     .update(menu.toMap());
   }
 
 }
+*/

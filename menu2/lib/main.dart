@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart'; //日本語設定
 
-import 'package:menu2/common/common_widget.dart';
-import 'package:menu2/common/common_providers.dart';
-import 'package:menu2/common/common_constant.dart';
-import 'package:menu2/user/view_model/user_view_model.dart';
+import 'package:menu2/main_view.dart';
 
 
 
@@ -28,44 +26,19 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: CommonScaffold(), //アプリ起動時に表示する最初の画面
+      //日本語設定
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('ja'), // 日本語
+          //Locale('en'), // 英語
+        ],
+        locale: const Locale('ja'), // アプリのデフォルト言語を日本語に設定
+      home: const CommonScaffold(), //アプリ起動時に表示する最初の画面
     );
   }
 }
-
-//共通のボトムバー設定のため
-class CommonScaffold extends ConsumerStatefulWidget {
-  @override
-  CommonScaffoldState createState() => CommonScaffoldState();
-}
-
-class CommonScaffoldState extends ConsumerState<CommonScaffold> {
-  
-  //userIdのセット
-  @override
-  void didChangeDependencies() {//ref.readが使用できる。
-
-    super.didChangeDependencies();
-
-    // 非同期処理をビルド後に実行する
-    Future.microtask(() async {
-      final fetchedUserId = await ref.read(userIdFutureProvider.future);
-      ref.read(userIdProvider.notifier).state = fetchedUserId;
-      print("main:$fetchedUserId");
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final pageIndex = ref.watch(pageIndexProvider);
-
-    return Scaffold(
-      appBar:AppBar(title: const Text("appbar")),
-      body:pages[pageIndex],
-      bottomNavigationBar: const CustomBottomBar(),
-    );
-  }
-}
-
-
 

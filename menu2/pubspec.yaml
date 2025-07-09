@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.2+1
 
 environment:
   sdk: ^3.5.4
@@ -29,6 +29,8 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
 
 
@@ -43,6 +45,25 @@ dependencies:
   flutter_hooks: ^0.21.2
   hooks_riverpod: ^2.6.1
   cached_network_image: ^3.4.1
+  fluttertoast: ^8.2.12
+  image_picker: ^1.1.2
+  image: ^4.5.4
+  firebase_storage: ^12.4.5
+  google_fonts: ^6.2.1
+  flutter_signin_button: ^2.0.0
+  google_sign_in: ^6.2.2
+  url_launcher: ^6.3.1
+  flutter_launcher_icons: ^0.14.3
+  intl: ^0.20.2
+  uuid: ^4.0.0
+  sign_in_with_apple: ^7.0.1
+  crypto: ^3.0.6
+  http: ^1.4.0
+
+flutter_launcher_icons:
+  image_path: "assets/icon/icon_ios.png"  # ← あなたのアイコン画像パス
+  ios: true
+  android: false  # Androidにも設定したいならtrueにする
 
 dev_dependencies:
   flutter_test:

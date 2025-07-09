@@ -1,16 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 import 'package:menu2/ingredient/data/model/ingredient.dart';
 
+
+
 class Menu {
 
-  DateTime createAt;
+  DateTime createdAt;
   String name;
   String imageURL;
   String imagePath;
-  int quantity;
+  int people;
   String tag;
-  List<Ingredient> ingredients;
+  List<Ing> ings;
   String howToMake;
   String memo;
   bool isFavorite;
@@ -21,16 +24,16 @@ class Menu {
   DateTime? dinnerDateBuf;
   int price;
   int unitPrice;
-  String userId;
+  String familyId;
 
   Menu({
-    DateTime? createAt, //メニュー作成年月日
+    DateTime? createdAt, //メニュー作成年月日
     this.name = '',//料理名
     this.imageURL = '', //firestrageの画像のURL
     this.imagePath = '',//firestrageのフォルダパス
-    this.quantity = 1,//何人前
-    this.tag = '',//タグ
-    List<Ingredient>? ingredients, //材料のリスト
+    this.people = 1,//何人前
+    this.tag = 'カテゴリー無',//タグ
+    List<Ing>? ings, //材料のリスト
     this.howToMake = '',//作り方
     this.memo = '', //メモ
     this.isFavorite = false, //お気に入り
@@ -41,18 +44,18 @@ class Menu {
     this.dinnerDateBuf,//夕食の履歴の削除時に元に戻すため。
     this.price = 0,//値段
     this.unitPrice = 0,//1人前の値段
-    this.userId = '', //ユーザーID(u0)
-  }) : createAt = createAt ?? DateTime.now(), // nullの場合今の時間を初期値に設定
-       ingredients = ingredients ?? [];
-       
+    this.familyId = '', //ユーザーID(u0)
+  }) : createdAt = createdAt ?? DateTime.now(), // nullの場合今の時間を初期値に設定
+       ings = ings ?? [];
+
   Menu copyWith({
-    DateTime? createAt,
+    DateTime? createdAt,
     String? name,
     String? imageURL,
     String? imagePath,
-    int? quantity,
+    int? people,
     String? tag,
-    List<Ingredient>? ingredients,
+    List<Ing>? ings,
     String? howToMake,
     String? memo,
     bool? isFavorite,
@@ -63,16 +66,16 @@ class Menu {
     DateTime? dinnerDateBuf,
     int? price,
     int? unitPrice,
-    String? userId,
+    String? familyId,
   }) {
     return Menu(
-      createAt: createAt ?? this.createAt,
+      createdAt: createdAt ?? this.createdAt,
       name: name ?? this.name,
       imageURL: imageURL ?? this.imageURL,
       imagePath: imagePath ?? this.imagePath,
-      quantity: quantity ?? this.quantity,
+      people: people ?? this.people,
       tag: tag ?? this.tag,
-      ingredients: ingredients ?? List.from(this.ingredients), // リストはコピー
+      ings: ings ?? List.from(this.ings), // リストはコピー
       howToMake: howToMake ?? this.howToMake,
       memo: memo ?? this.memo,
       isFavorite: isFavorite ?? this.isFavorite,
@@ -83,7 +86,7 @@ class Menu {
       dinnerDateBuf: dinnerDateBuf ?? this.dinnerDateBuf,
       price: price ?? this.price,
       unitPrice: unitPrice ?? this.unitPrice,
-      userId: userId ?? this.userId,
+      familyId: familyId ?? this.familyId,
     );
   }
   
@@ -91,14 +94,14 @@ class Menu {
   //FirestoreからのデータからMenusインスタンスを生成する.
   factory Menu.fromFirestore(Map<String, dynamic> data) {
     return Menu(
-      createAt: (data['createAt'] as Timestamp?)?.toDate() ?? DateTime.now(), //TimestampはDateTimeに変換
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(), //TimestampはDateTimeに変換
       name: data['name'] as String? ?? "",
       imageURL: data['imageURL'] as String? ?? "",
       imagePath: data['imagePath'] as String? ?? "",
-      quantity: data['quantity'] as int? ?? 1,
-      tag: data['tag'] as String? ?? "",
-      ingredients: (data['ingredients'] as List<dynamic>?)
-        ?.map((e) => Ingredient.fromFirestore(e as Map<String, dynamic>)) // List<dynamic>の各要素をMap<String, dynamic>に変換
+      people: data['people'] as int ,//?? 1,
+      tag: data['tag'] as String? ?? "カテゴリー無",
+      ings: (data['ings'] as List<dynamic>?)
+        ?.map((e) => Ing.fromFirestore(e as Map<String, dynamic>)) // List<dynamic>の各要素をMap<String, dynamic>に変換
         .toList() ?? [], // nullの場合は空のリストを設定
       howToMake: data['howToMake'] as String? ?? "",
       memo: data['memo'] as String? ?? "",
@@ -110,22 +113,22 @@ class Menu {
       dinnerDateBuf: (data['dinnerDateBuf'] as Timestamp?)?.toDate(), //日付ない場合はnull
       price: data['price'] as int? ?? 0,
       unitPrice: data['unitPrice'] as int? ?? 0,
-      userId: data['userId'] as String? ?? '',
+      familyId: data['familyId'] as String? ?? '',
     );
   }
 
   //menu型をfirebaseで保存するためmap型に変換.
   Map<String, dynamic> toMap(){
     return{
-      'createAt': Timestamp.fromDate(createAt),//firebaseはtimestap型で保存される。
+      'createdAt': Timestamp.fromDate(createdAt),//firebaseはtimestap型で保存される。
       'name': name,
       'imageURL': imageURL,
       'imagePath': imagePath,
-      'quantity': quantity,
+      'people': people,
       'tag': tag,
-      'ingredients': ingredients.isEmpty
+      'ings': ings.isEmpty
           ? []
-          : ingredients.map((ingredient) => ingredient.toMap()).toList(),
+          : ings.map((ing) => ing.toMap()).toList(),
       'howToMake': howToMake,
       'memo': memo,
       'isFavorite': isFavorite,
@@ -136,7 +139,43 @@ class Menu {
       'dinnerDateBuf': dinnerDateBuf != null ? Timestamp.fromDate(dinnerDateBuf!) : null,
       'price': price,
       'unitPrice': unitPrice,
-      'userId': userId,
+      'userId': familyId,
     };
   }
+}
+
+//メニューのテキストコントローラーセット
+class MenuTextControllers {
+  final nameController = TextEditingController();
+  final peopleController = TextEditingController();
+  final howToMakeController = TextEditingController();
+  final memoController = TextEditingController();
+  final priceController = TextEditingController();//自由入力で使用。
+
+  MenuTextControllers();
+
+  void init(Menu menu) {
+    nameController.text = menu.name;
+    peopleController.text = menu.people.toString();
+    howToMakeController.text = menu.howToMake;
+    memoController.text = menu.memo;
+  }
+
+  void dispose() {
+    nameController.dispose();
+    peopleController.dispose();
+    howToMakeController.dispose();
+    memoController.dispose();
+    priceController.dispose();
+  }
+
+  void clear(){
+    nameController.clear();
+    peopleController.clear();
+    howToMakeController.clear();
+    memoController.clear();
+    priceController.clear();
+  }
+
+
 }

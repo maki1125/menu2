@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Menu2</string>
+	<string>節約レシピ</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -45,5 +45,37 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
+  <key>CFBundleURLTypes</key>
+  <array>
+    <!-- Google用 -->
+    <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <string>com.googleusercontent.apps.722560945844-bo9o3upv8l00gobsq6idqh0p770ok2e4</string>
+        </array>
+    </dict>
+
+    <!-- Apple用（必要な場合）-->
+    <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <string>com.kudomaki.menu4</string> <!-- あなたの Bundle ID または任意のカスタムスキーム -->
+        </array>
+    </dict>
+  </array>
+  <key>NSLocalNetworkUsageDescription</key>
+  <string>Flutterアプリがローカルネットワークにアクセスするための許可が必要です</string>
+  <key>NSFaceIDUsageDescription</key>
+  <string>AppleサインインのためにFace IDを使用します。</string>
+  <key>ITSAppUsesNonExemptEncryption</key>
+  <false/>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>写真を選択するために使用します</string>
+
 </dict>
 </plist>
